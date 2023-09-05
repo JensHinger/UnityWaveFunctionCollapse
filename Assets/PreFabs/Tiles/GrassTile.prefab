@@ -97,5 +97,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allowedTiles:
-  - {fileID: 1572425204691034931, guid: 498c93c32417a5343aea204435527427, type: 3}
+  - {fileID: 1139974094161387139, guid: b266b19c47b28e64e85dbacbf9dcc374, type: 3}
   - {fileID: 633245607058750814}

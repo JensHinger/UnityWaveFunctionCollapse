@@ -58,7 +58,7 @@ public class gridTest : MonoBehaviour
 
     private IEnumerator collapseCell()
     {
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(0f);
 
         int collapseX = 0;
         int collapseY = 0;
@@ -119,8 +119,6 @@ public class gridTest : MonoBehaviour
     public List<Tile> getNeighbours(int x, int y)
     {
         List<Tile> Neighbours = new List<Tile>();
-
-        Debug.Log(x + "   " + y);
 
         if (y + 1 < fieldSize) 
         {
