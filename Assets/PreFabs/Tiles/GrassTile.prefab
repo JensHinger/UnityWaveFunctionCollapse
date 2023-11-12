@@ -99,3 +99,4 @@ MonoBehaviour:
   allowedTiles:
   - {fileID: 1139974094161387139, guid: b266b19c47b28e64e85dbacbf9dcc374, type: 3}
   - {fileID: 633245607058750814}
+  weight: 1

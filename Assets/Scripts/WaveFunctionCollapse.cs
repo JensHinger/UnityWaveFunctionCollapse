@@ -7,6 +7,7 @@ public class WaveFunctionCollapse : MonoBehaviour
 
     public GameObject blankTile;
     public int fieldSize;
+    public int speedModifier;
 
     private Tile[,] Grid;
     private GameObject[,] VisibleGrid;
@@ -27,8 +28,6 @@ public class WaveFunctionCollapse : MonoBehaviour
         }
 
         DrawGrid();
-
-        StartCoroutine(collapseCell());
     }
 
     void DrawGrid()
@@ -56,9 +55,8 @@ public class WaveFunctionCollapse : MonoBehaviour
         }
     }
 
-    private IEnumerator collapseCell()
+    void collapseCell()
     {
-        yield return new WaitForSeconds(0f);
 
         int collapseX = 0;
         int collapseY = 0;
@@ -70,6 +68,7 @@ public class WaveFunctionCollapse : MonoBehaviour
             collapseY = Random.Range(0, fieldSize);
             collapsedFirst = true;
         }
+        // After First Cell collapse by entropy
         else
         {
 
@@ -90,12 +89,12 @@ public class WaveFunctionCollapse : MonoBehaviour
                 }
             }
         }
-        // After First Cell collapse by entropy
 
         int countPossStates = Grid[collapseX, collapseY].possibleStates.Length;
-        int randomChoice = Random.Range(0, countPossStates);
+        float randomChoice = Random.Range(0.0f, 1.0f);
+        int indexChoice = System.Array.FindIndex(Grid[collapseX, collapseY].normalizedWeights, value => value > randomChoice);
 
-        Grid[collapseX, collapseY].possibleStates = new GameObject[] { Grid[collapseX, collapseY].possibleStates[randomChoice] };
+        Grid[collapseX, collapseY].possibleStates = new GameObject[] { Grid[collapseX, collapseY].possibleStates[indexChoice] };
         Grid[collapseX, collapseY].hasCollapsed = true;
 
         Destroy(VisibleGrid[collapseX, collapseY]);
@@ -110,10 +109,13 @@ public class WaveFunctionCollapse : MonoBehaviour
         List<Tile> Neighbours = getNeighbours(x, y);
 
         // Get intersection of all possible states
-        foreach (Tile neighbour in Neighbours)
+        foreach (Tile neighbour in Neighbours) { 
             neighbour.possibleStates = Grid[x, y].possibleStates[0].GetComponent<TileProperties>().allowedTiles.Intersect(neighbour.possibleStates, new GameObjectEqualityComparer()).ToArray();
-
-        StartCoroutine(collapseCell());
+            // Should also remove weights?
+            // neighbour.normalizedWeights = 
+            // TODO: Probably not the best approach
+            neighbour.NormalizeWeights();
+        }
     }
 
     public List<Tile> getNeighbours(int x, int y)
@@ -148,8 +150,11 @@ public class WaveFunctionCollapse : MonoBehaviour
     }
 
     // Update is called once per frame
-        void FixedUpdate()
+    void FixedUpdate()
     {
-      
+        for(int i = 0; i < speedModifier ; i++)
+        {
+            collapseCell();
+        }
     }
 }

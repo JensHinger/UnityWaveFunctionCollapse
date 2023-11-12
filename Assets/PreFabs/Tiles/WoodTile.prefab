@@ -133,6 +133,7 @@ MonoBehaviour:
   - {fileID: 633245607058750814, guid: 9a7c10cfe3194c047b4837b096491688, type: 3}
   - {fileID: 1572425204691034931, guid: 498c93c32417a5343aea204435527427, type: 3}
   - {fileID: 1139974094161387139}
+  weight: 2
 --- !u!1 &3578745621410295250
 GameObject:
   m_ObjectHideFlags: 0
