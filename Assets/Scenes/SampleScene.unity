@@ -252,8 +252,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blankTile: {fileID: 7359239561799878127, guid: 0d331c20b360bc64d9b9a430fe80c923, type: 3}
-  fieldSize: 50
-  speedModifier: 1
+  fieldSize: 100
+  speedModifier: 50
 --- !u!1 &1199310551
 GameObject:
   m_ObjectHideFlags: 0

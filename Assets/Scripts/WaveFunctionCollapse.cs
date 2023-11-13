@@ -12,6 +12,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     private Tile[,] Grid;
     private GameObject[,] VisibleGrid;
     private bool collapsedFirst = false;
+    private bool isFinished = false;
 
     // Start is called before the first frame update
     void Start()
@@ -55,15 +56,15 @@ public class WaveFunctionCollapse : MonoBehaviour
         }
     }
 
-    void collapseCell()
+    bool collapseCell()
     {
 
         int collapseX = 0;
         int collapseY = 0;
 
         // First Cell should be random
-        if (!collapsedFirst) 
-        { 
+        if (!collapsedFirst)
+        {
             collapseX = Random.Range(0, fieldSize);
             collapseY = Random.Range(0, fieldSize);
             collapsedFirst = true;
@@ -90,6 +91,11 @@ public class WaveFunctionCollapse : MonoBehaviour
             }
         }
 
+        // If every cell collapsed return true
+        if (Grid[collapseX, collapseY].hasCollapsed) {
+            return true;
+        }
+
         int countPossStates = Grid[collapseX, collapseY].possibleStates.Length;
         float randomChoice = Random.Range(0.0f, 1.0f);
         int indexChoice = System.Array.FindIndex(Grid[collapseX, collapseY].normalizedWeights, value => value > randomChoice);
@@ -97,10 +103,23 @@ public class WaveFunctionCollapse : MonoBehaviour
         Grid[collapseX, collapseY].possibleStates = new GameObject[] { Grid[collapseX, collapseY].possibleStates[indexChoice] };
         Grid[collapseX, collapseY].hasCollapsed = true;
 
+        // Destroys the blank tile
         Destroy(VisibleGrid[collapseX, collapseY]);
-        VisibleGrid[collapseX, collapseY] = GameObject.Instantiate(Grid[collapseX, collapseY].possibleStates[0], new(10 * collapseX, 10 * collapseY), Grid[collapseX, collapseY].possibleStates[0].transform.localRotation);
+
+        // Instantiate the (randomly) chosen new tile
+        VisibleGrid[collapseX, collapseY] = GameObject.Instantiate(Grid[collapseX, collapseY].possibleStates[0],
+            new(10 * collapseX, 10 * collapseY),
+            Grid[collapseX, collapseY].possibleStates[0].transform.localRotation);
+
+        // Get some random rotation; apply rotation
+        int randomRotationIndex = Random.Range(0, 3);
+        int[] possibleRotation = new int[] { 0, 90, 180, 270 };
+        VisibleGrid[collapseX, collapseY].transform.Rotate(new Vector3(0, 0, possibleRotation[randomRotationIndex]), Space.Self);
 
         propogateCollapse(collapseX, collapseY);
+
+        // if there are still uncollapsed cells return false
+        return false;
     }
 
     public void propogateCollapse(int x, int y)
@@ -151,10 +170,15 @@ public class WaveFunctionCollapse : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
-    {
-        for(int i = 0; i < speedModifier ; i++)
+    { 
+        // Checks if the wvc is done
+        if (!isFinished)
         {
-            collapseCell();
+            // modifies the speed by calling the collapse function n times every Fixed frame
+            for (int i = 0; i < speedModifier; i++)
+            {
+                isFinished  = collapseCell();
+            }
         }
     }
 }
